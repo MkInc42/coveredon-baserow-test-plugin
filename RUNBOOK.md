@@ -167,3 +167,11 @@ Compare against this runbook: it is verified for **2.3.3** only. Re-verify the
 plugin discovery logic in `backend/src/baserow/config/settings/base.py` and the
 `Plugin`/`plugin_registry` API in `backend/src/baserow/core/registries.py` on
 the target version before reusing.
+
+## Updating an installed plugin (learned live, 2026-09-05)
+
+- `install-plugin` WITHOUT `--overwrite` silently keeps OLD files ("not overwriting").
+- `pip install <repo-tarball-url>` fails: setup.py is nested under plugins/<module>/
+  backend in the archive, not at the root. Always refresh via install-plugin
+  --overwrite, then pip install the LOCAL path /baserow/data/plugins/<module>/backend.
+- Repo-tarball URLs work for install-plugin but NOT for pip directly.
