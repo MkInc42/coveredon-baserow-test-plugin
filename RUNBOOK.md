@@ -175,3 +175,7 @@ the target version before reusing.
   backend in the archive, not at the root. Always refresh via install-plugin
   --overwrite, then pip install the LOCAL path /baserow/data/plugins/<module>/backend.
 - Repo-tarball URLs work for install-plugin but NOT for pip directly.
+- In-container HTTP calls to Baserow API: use http://localhost:8000/api (backend direct).
+  http://localhost/api via Caddy returns Baserow 404 URL_NOT_FOUND because of Host-header
+  routing (Host: localhost is not an allowed host) — even though the same path works
+  externally via baserow.dmz.local:8682.
