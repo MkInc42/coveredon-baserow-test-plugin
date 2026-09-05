@@ -190,3 +190,15 @@ compose-prefixed (check `docker volume ls | grep baserow`) — the data volume i
 baserow_baserow_data. Crash-loop recovery: force stop, rm the plugin dir from
 the volume via a throwaway container, compose up --force-recreate (venv resets
 with the image), then frontend build → venv wheel install → restart.
+
+## PROVEN crash-loop recovery (2026-09-05, used successfully)
+
+When a plugin's wheel is missing from a fresh venv but its dir remains on the
+volume: stop container, rm ALL plugin dirs from the volume via throwaway
+container, compose up --force-recreate. Health returns; data (rows) is intact.
+
+# docker stop -t 0 baserow
+# docker volume ls | grep baserow   # find compose-prefixed volume name
+# docker run --rm -v baserow_baserow_data:/baserow/data --entrypoint /bin/bash \
+#   baserow/baserow:2.3.3 -c "rm -rf /baserow/data/plugins/<plugin> && ls /baserow/data/plugins/"
+# cd /opt/docker_containers/baserow && docker compose up -d --force-recreate
