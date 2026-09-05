@@ -179,3 +179,14 @@ the target version before reusing.
   http://localhost/api via Caddy returns Baserow 404 URL_NOT_FOUND because of Host-header
   routing (Host: localhost is not an allowed host) — even though the same path works
   externally via baserow.dmz.local:8682.
+
+## CRITICAL: the DMZ Baserow is a DOCKER COMPOSE stack — always use compose commands
+
+It runs from /opt/docker_containers/baserow as topflight (rootless docker). All
+container lifecycle must be compose: `docker compose up -d --force-recreate`,
+NOT raw docker stop/start (a stopped compose container needs compose to start;
+raw docker commands caused a full-outage detour on 2026-09-05). Volume name is
+compose-prefixed (check `docker volume ls | grep baserow`) — the data volume is
+baserow_baserow_data. Crash-loop recovery: force stop, rm the plugin dir from
+the volume via a throwaway container, compose up --force-recreate (venv resets
+with the image), then frontend build → venv wheel install → restart.
