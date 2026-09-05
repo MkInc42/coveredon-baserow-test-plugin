@@ -202,3 +202,13 @@ container, compose up --force-recreate. Health returns; data (rows) is intact.
 # docker run --rm -v baserow_baserow_data:/baserow/data --entrypoint /bin/bash \
 #   baserow/baserow:2.3.3 -c "rm -rf /baserow/data/plugins/<plugin> && ls /baserow/data/plugins/"
 # cd /opt/docker_containers/baserow && docker compose up -d --force-recreate
+
+## Final lessons from the live incident (2026-09-05)
+
+- A data volume can have MULTIPLE names/copies — always `docker inspect baserow` to
+  find the REAL mounted volume before cleaning. Cleaning the wrong one = nothing
+  changes, boot loop continues.
+- Never leave `<PLACEHOLDER>` in recovery commands — run exactly what's verified.
+- Full incident summary: plugin dir on volume + missing wheel in venv = boot loop
+  (INSTALLED_APPS import fail). Volume-only cleanup with a fresh venv (compose
+  recreate) restores service. All data survived every incident.
